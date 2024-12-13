@@ -1,0 +1,28 @@
+modules:
+  bitbucket:repoCodeOverviewCard:
+    - key: client-hello-world-repository-code-overview-card
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: PRR BOT
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+app:
+  runtime:
+    name: nodejs20.x
+  id: ari:cloud:ecosystem::app/1ab9abb2-19e8-4eb1-9eb0-2c9afffd195d
+permissions:
+  scopes:
+    - read:repository:bitbucket
+    - read:pullrequest:bitbucket
+  external:
+    fetch:
+      backend:
+        - https://api.bitbucket.org
+      client:
+        - https://api.bitbucket.org
