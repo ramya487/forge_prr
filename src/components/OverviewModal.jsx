@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalBody,
@@ -14,6 +14,8 @@ import {
   Stack,
 } from "@forge/react";
 import ChangedFilesTable from "./ChangedFilesTable";
+import { instance } from "../axios/instance";
+import { FETCH_COMMITS_IN_PULL_REQUEST, FETCH_FILE_CONTENTS } from "../utils/urls";
 
 const OverviewModal = ({
   loading,
@@ -23,6 +25,43 @@ const OverviewModal = ({
   prTitle,
   prId,
 }) => {
+
+  const [latestCommitHash, setLatestCommitHash] = useState("");
+  const fetchLatestCommitHash = async () => {
+    try {
+      const response = await instance.get(FETCH_COMMITS_IN_PULL_REQUEST(prId));
+      const hash = response.data['values'][0]['hash'];
+      setLatestCommitHash(hash);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchFileContent = async (commitHash, path) => {
+    try {
+      const response = await instance.get(FETCH_FILE_CONTENTS(commitHash, path));
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const reviewPullRequest = async () => {
+    try {
+      for (let i = 0; i<tableRows.length; i++){
+        const path = tableRows[i]['cells'][0]['content'];
+        const fileContent = await fetchFileContent(latestCommitHash, path);
+        // apply llm review logic
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (prId) fetchLatestCommitHash();
+  }, [prId])
+
   return (
     <>
       <LoadingButton type="submit" isLoading={loading}>
@@ -65,7 +104,7 @@ const OverviewModal = ({
               <Button appearance="subtle" onClick={closeModal}>
                 Cancel
               </Button>
-              <LoadingButton onClick={closeModal}>Review</LoadingButton>
+              <LoadingButton onClick={() => reviewPullRequest()}>Review</LoadingButton>
             </ModalFooter>
           </Modal>
         )}
