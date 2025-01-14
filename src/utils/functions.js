@@ -1,7 +1,7 @@
 import uuid from 'uuid-random';
 
 export const getValuesArray = (response) => {
-  return response.data.values;
+  return response.values;
 };
 
 export const PRListToDropDown = (prlist) => {

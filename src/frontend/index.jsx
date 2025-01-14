@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { invoke } from "@forge/bridge";
+
 import ForgeReconciler, {
   Text,
   Box,
   Stack,
-  Button,
   Form,
   useForm,
 } from "@forge/react";
 import DropDown from "../components/DropDown";
 import OverviewModal from "../components/OverviewModal";
-import { instance } from "../axios/instance";
-import { FETCH_PULL_REQUEST_DIFF } from "../utils/urls";
+import { FETCH_PULL_REQUESTS_DIFF } from "../utils/urls";
 import { extractFiles, formatFileList } from "../utils/functions";
 
 const App = () => {
@@ -32,9 +32,12 @@ const App = () => {
       const pr_title = data["pr"]["label"];
       setPRTitle(pr_title);
       setPRId(pr_id);
-      const response = await instance.get(FETCH_PULL_REQUEST_DIFF(pr_id));
-      const diffText = response.data;
-      setTableRows(formatFileList(extractFiles(diffText)));
+      const response = await invoke(FETCH_PULL_REQUESTS_DIFF, {
+        prId: pr_id,
+      });
+      const diffText = response;
+      const rows = formatFileList(extractFiles(diffText));
+      setTableRows(rows);
       openModal();
     } catch (error) {
       console.log(error);
@@ -42,6 +45,7 @@ const App = () => {
       setLoading(false);
     }
   };
+
   return (
     <Form onSubmit={handleSubmit(submit)}>
       <Stack space="space.200">

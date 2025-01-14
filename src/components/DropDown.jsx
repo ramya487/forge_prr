@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Select } from "@forge/react";
 import { getValuesArray, PRListToDropDown } from "../utils/functions";
 import { FETCH_PULL_REQUESTS } from "../utils/urls";
-import { instance } from "../axios/instance";
+import { invoke } from "@forge/bridge";
 
-const DropDown = ({register}) => {
+const DropDown = ({ register }) => {
   const [prlist, setPRList] = useState([]);
   const fetchPullRequests = async () => {
     try {
-      const response = await instance.get(FETCH_PULL_REQUESTS);
+      const response = await invoke(FETCH_PULL_REQUESTS);
       setPRList(PRListToDropDown(getValuesArray(response)));
     } catch (error) {
       console.log(error);
@@ -19,7 +19,7 @@ const DropDown = ({register}) => {
     fetchPullRequests();
   }, []);
 
-  return <Select appearance="default" options={prlist} {...register("pr")}  />;
+  return <Select appearance="default" options={prlist} {...register("pr")} />;
 };
 
 export default DropDown;
