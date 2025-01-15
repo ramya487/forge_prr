@@ -67,4 +67,25 @@ resolver.define("FETCH_FILE_CONTENTS", async ({ context, payload }) => {
   return res.text(); // since contents of the file in a particular commit is returned as text
 });
 
+resolver.define("ADD_COMMENT_TO_PR", async ({ context, payload }) => {
+  const workspaceId = context.workspaceId;
+  const repositoryId = context.extension.repository.uuid;
+  const prId = payload.prId;
+  const requestBody = payload.requestBody;
+  const res = await api
+    .asApp()
+    .requestBitbucket(
+      route`/2.0/repositories/${workspaceId}/${repositoryId}/pullrequests/${prId}/comments`,
+      {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+  return res;
+});
+
 export const handler = resolver.getDefinitions();

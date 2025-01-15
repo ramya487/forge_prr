@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
 
-import ForgeReconciler, { Text, Box, Stack, Form, useForm } from "@forge/react";
+import ForgeReconciler, {
+  Text,
+  Box,
+  Stack,
+  Form,
+  useForm,
+} from "@forge/react";
 import DropDown from "../components/DropDown";
 import OverviewModal from "../components/OverviewModal";
 import { FETCH_PULL_REQUESTS_DIFF } from "../utils/urls";
@@ -25,7 +31,10 @@ const App = () => {
   // comment modal
   const [isOpenCommentModal, setIsOpenCommentModal] = useState(false);
   const openCommentModal = () => setIsOpenCommentModal(true);
-  const closeCommentModal = () => setIsOpenCommentModal(false);
+  const closeCommentModal = () => {
+    setIsOpenCommentModal(false);
+    setComments([]);
+  };
 
   const submit = async (data) => {
     try {
@@ -76,6 +85,7 @@ const App = () => {
             isOpenCommentModal={isOpenCommentModal}
             closeCommentModal={closeCommentModal}
             comments={comments}
+            prId={prId}
           />
         </Box>
       </Stack>
