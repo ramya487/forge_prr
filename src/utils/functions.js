@@ -35,3 +35,13 @@ export const formatFileList = (fileArray) => {
   })
   return tableRows;
 }
+
+export const formatComments = (commentsArray, fileName) => {
+  const formattedArray = commentsArray.map((item) => {
+    return {
+      fileName,
+      ...item
+    }
+  })
+  return formattedArray;
+}

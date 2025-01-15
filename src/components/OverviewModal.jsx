@@ -20,6 +20,7 @@ import {
 } from "../utils/urls";
 import axios from "axios";
 import { invoke } from "@forge/bridge";
+import { formatComments } from "../utils/functions";
 
 const OverviewModal = ({
   loading,
@@ -28,6 +29,9 @@ const OverviewModal = ({
   tableRows,
   prTitle,
   prId,
+  setComments,
+  comments,
+  openCommentModal,
 }) => {
   const [latestCommitHash, setLatestCommitHash] = useState("");
   const fetchLatestCommitHash = async () => {
@@ -44,8 +48,8 @@ const OverviewModal = ({
     try {
       const response = await invoke(FETCH_FILE_CONTENTS, {
         commitHash,
-        path
-      })
+        path,
+      });
       return response;
     } catch (error) {
       console.log(error);
@@ -61,12 +65,13 @@ const OverviewModal = ({
           code: code,
         },
       });
-      const cleanedString = response.data["output"]
-        .replace(/'/g, '"') // Replace single quotes with double quotes
-        .replace(/\s+/g, " ") // Replace all whitespace (spaces, tabs, newlines) with a single space
-        .replace(/\n/g, "") // Remove any remaining newlines
-        .replace(/\s*([\[\],])\s*/g, "$1"); // Remove extra spaces around brackets and commas
-      console.log("cleaned string: ",cleanedString);
+      const cleanedJsonString = response.data["output"]
+        .replace(/```/g, "") // Remove backticks
+        .replace(/\\n/g, "") // Remove newline escape sequences
+        .replace(/\\t/g, "") // Remove tab escape sequences
+        .trim(); // Remove any extra whitespace at the start or end
+
+      return JSON.parse(cleanedJsonString);
     } catch (error) {
       console.log(error);
     } finally {
@@ -79,8 +84,13 @@ const OverviewModal = ({
       for (let i = 0; i < tableRows.length; i++) {
         const path = tableRows[i]["cells"][0]["content"];
         const fileContent = await fetchFileContent(latestCommitHash, path);
-        await fn(fileContent);
+        const response = await fn(fileContent);
+        const commentArray = response["issues"];
+        const formattedCommentArray = formatComments(commentArray, path);
+        setComments([...comments, ...formattedCommentArray]);
       }
+      closeModal();
+      openCommentModal();
     } catch (error) {
       console.log(error);
     }

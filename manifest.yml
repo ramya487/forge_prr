@@ -20,9 +20,3 @@ permissions:
   scopes:
     - read:repository:bitbucket
     - read:pullrequest:bitbucket
-  external:
-    fetch:
-      backend:
-        - https://api.bitbucket.org
-      client:
-        - https://api.bitbucket.org

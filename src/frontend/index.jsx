@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
 
-import ForgeReconciler, {
-  Text,
-  Box,
-  Stack,
-  Form,
-  useForm,
-} from "@forge/react";
+import ForgeReconciler, { Text, Box, Stack, Form, useForm } from "@forge/react";
 import DropDown from "../components/DropDown";
 import OverviewModal from "../components/OverviewModal";
 import { FETCH_PULL_REQUESTS_DIFF } from "../utils/urls";
 import { extractFiles, formatFileList } from "../utils/functions";
+import CommentModal from "../components/CommentModal";
 
 const App = () => {
   const { handleSubmit, register } = useForm();
@@ -24,6 +19,13 @@ const App = () => {
   const [isOpen, setIsOpen] = useState(false);
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+
+  const [comments, setComments] = useState([]);
+
+  // comment modal
+  const [isOpenCommentModal, setIsOpenCommentModal] = useState(false);
+  const openCommentModal = () => setIsOpenCommentModal(true);
+  const closeCommentModal = () => setIsOpenCommentModal(false);
 
   const submit = async (data) => {
     try {
@@ -66,6 +68,14 @@ const App = () => {
             tableRows={tableRows}
             prTitle={prTitle}
             prId={prId}
+            setComments={setComments}
+            comments={comments}
+            openCommentModal={openCommentModal}
+          />
+          <CommentModal
+            isOpenCommentModal={isOpenCommentModal}
+            closeCommentModal={closeCommentModal}
+            comments={comments}
           />
         </Box>
       </Stack>
