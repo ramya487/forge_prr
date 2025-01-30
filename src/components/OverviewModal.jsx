@@ -65,11 +65,12 @@ const OverviewModal = ({
           code: code,
         },
       });
-      const cleanedJsonString = response.data["output"]
-        .replace(/```/g, "") // Remove backticks
+      const cleanedJsonString = response.data["output"]["content"]
+        .replace(/^```json\n/, "") // Remove the starting ```json
+        .replace(/```$/, "") // Remove the ending ```
         .replace(/\\n/g, "") // Remove newline escape sequences
         .replace(/\\t/g, "") // Remove tab escape sequences
-        .trim(); // Remove any extra whitespace at the start or end
+        .trim(); // Trim any extra whitespace
 
       return JSON.parse(cleanedJsonString);
     } catch (error) {
@@ -85,7 +86,7 @@ const OverviewModal = ({
         const path = tableRows[i]["cells"][0]["content"];
         const fileContent = await fetchFileContent(latestCommitHash, path);
         const response = await fn(fileContent);
-        const commentArray = response["issues"];
+        const commentArray = response;
         const formattedCommentArray = formatComments(commentArray, path);
         setComments([...comments, ...formattedCommentArray]);
       }
