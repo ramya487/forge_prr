@@ -4,3 +4,4 @@ export const FETCH_PULL_REQUESTS_DIFF = "FETCH_PULL_REQUESTS_DIFF";
 export const FETCH_COMMITS_IN_PULL_REQUEST = "FETCH_COMMITS_IN_PULL_REQUEST"; // fetches all the commits made to the pull request
 export const FETCH_FILE_CONTENTS = "FETCH_FILE_CONTENTS"; // fetches the contents of the file at a particular commit
 export const ADD_COMMENT_TO_PR = "ADD_COMMENT_TO_PR";
+export const GET_BACKEND_URL="GET_BACKEND_URL";

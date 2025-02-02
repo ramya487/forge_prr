@@ -88,4 +88,8 @@ resolver.define("ADD_COMMENT_TO_PR", async ({ context, payload }) => {
   return res;
 });
 
+resolver.define("GET_BACKEND_URL", () => { // it is asynchronous i believe
+  return process.env.BACKEND_URL;
+})
+
 export const handler = resolver.getDefinitions();

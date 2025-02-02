@@ -17,6 +17,7 @@ import ChangedFilesTable from "./ChangedFilesTable";
 import {
   FETCH_COMMITS_IN_PULL_REQUEST,
   FETCH_FILE_CONTENTS,
+  GET_BACKEND_URL,
 } from "../utils/urls";
 import axios from "axios";
 import { invoke } from "@forge/bridge";
@@ -56,11 +57,13 @@ const OverviewModal = ({
     }
   };
 
+  const [backend_url, setBackendUrl] = useEffect("");
+
   const [reviewing, setReviewing] = useState(false);
   const fn = async (code) => {
     try {
       setReviewing(true);
-      const response = await axios.post("http://localhost:8000/review/invoke", {
+      const response = await axios.post(`${backend_url}/review/invoke`, {
         input: {
           code: code,
         },
@@ -86,7 +89,7 @@ const OverviewModal = ({
         const path = tableRows[i]["cells"][0]["content"];
         const fileContent = await fetchFileContent(latestCommitHash, path);
         const response = await fn(fileContent);
-        const commentArray = response;
+        const commentArray = response["isseus"];
         const formattedCommentArray = formatComments(commentArray, path);
         setComments([...comments, ...formattedCommentArray]);
       }
@@ -100,6 +103,14 @@ const OverviewModal = ({
   useEffect(() => {
     if (prId) fetchLatestCommitHash();
   }, [prId]);
+
+  const setUrl = async () => {
+    setBackendUrl(await invoke(GET_BACKEND_URL));
+  }
+
+  useEffect(() => {
+    setUrl();
+  }, [])
 
   return (
     <>
