@@ -50,7 +50,7 @@ After the execution of the command, you will be asked to enter the credentials: 
 forge variables set FORGE_USER_VAR_BACKEND_URL <your-backend-baseurl>
 forge variables set -e <environment> BACKEND_URL <your-backend-baseurl>
 ```
-Replace ```<your-backend-baseurl>``` with the url where your FastAPI backend is hosted inorder to make calls to the LLM
+Replace ```<your-backend-baseurl>``` with the url where your FastAPI backend is hosted inorder to make calls to the LLM. Update the same in the ```manifest.yml``` file.
 
 Pls Note that, inorder to access environment variables during forge tunnel it is necessary to prefix them as ```FORGE_USER_VAR_``` . You could learn more about setting environment variables in forge in this [link](https://developer.atlassian.com/platform/forge/environments-and-versions/).
 
