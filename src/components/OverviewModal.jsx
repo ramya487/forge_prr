@@ -19,7 +19,6 @@ import {
   FETCH_FILE_CONTENTS,
   GET_BACKEND_URL,
 } from "../utils/urls";
-import axios from "axios";
 import { invoke } from "@forge/bridge";
 import { formatComments } from "../utils/functions";
 
@@ -57,18 +56,21 @@ const OverviewModal = ({
     }
   };
 
-  const [backend_url, setBackendUrl] = useEffect("");
-
   const [reviewing, setReviewing] = useState(false);
   const fn = async (code) => {
+    const backend_url = await invoke(GET_BACKEND_URL);
     try {
       setReviewing(true);
-      const response = await axios.post(`${backend_url}/review/invoke`, {
+      const body = {
         input: {
-          code: code,
-        },
-      });
-      const cleanedJsonString = response.data["output"]["content"]
+          code: code
+        }
+      }
+      const response = await fetch(`${backend_url}/review/invoke`, {
+        method: "POST",
+        body: JSON.stringify(body)
+      })
+      const cleanedJsonString = (await response.json())["output"]["content"]
         .replace(/^```json\n/, "") // Remove the starting ```json
         .replace(/```$/, "") // Remove the ending ```
         .replace(/\\n/g, "") // Remove newline escape sequences
@@ -89,7 +91,7 @@ const OverviewModal = ({
         const path = tableRows[i]["cells"][0]["content"];
         const fileContent = await fetchFileContent(latestCommitHash, path);
         const response = await fn(fileContent);
-        const commentArray = response["isseus"];
+        const commentArray = response["issues"];
         const formattedCommentArray = formatComments(commentArray, path);
         setComments([...comments, ...formattedCommentArray]);
       }
@@ -103,14 +105,6 @@ const OverviewModal = ({
   useEffect(() => {
     if (prId) fetchLatestCommitHash();
   }, [prId]);
-
-  const setUrl = async () => {
-    setBackendUrl(await invoke(GET_BACKEND_URL));
-  }
-
-  useEffect(() => {
-    setUrl();
-  }, [])
 
   return (
     <>
