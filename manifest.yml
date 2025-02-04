@@ -20,3 +20,7 @@ permissions:
   scopes:
     - read:repository:bitbucket
     - read:pullrequest:bitbucket
+  external:
+    fetch: 
+      client:
+        - <your-backend-baseurl>
